@@ -1,27 +1,34 @@
 from django.db import models
-from cloudinary.models import CloudinaryField
-import cloudinary
 # Create your models here.
 
 class Top(models.Model):
     name = models.CharField(max_length=100)
-    image = CloudinaryField('tops')
+    image = models.ImageField(upload_to="tops")
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.name
-    
+        
+    class Meta:
+        ordering = ['-updated_at']
+        
     def delete(self, using=None, keep_parents=False):
-        cloudinary.uploader.destroy(Top.image.public_id)
+        self.image.delete(self.image.name)
+        super().delete()
 
-
-
+    def save(self, *args, **kwargs):
+        try:
+            this = Top.objects.get(id=self.id)
+            if this.image != self.image:
+                this.image.delete()
+        except: pass
+        super(Top, self).save(*args, **kwargs)
 
 class Item(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField()
-    thumbnail = CloudinaryField('items')
+    thumbnail = models.ImageField(upload_to="items")
     price = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -45,7 +52,7 @@ class Item(models.Model):
 
 class Highlight(models.Model):
     title = models.CharField(max_length=30)
-    picture = CloudinaryField('highlights')
+    picture = models.ImageField(upload_to="highlights")
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -70,7 +77,7 @@ class Highlight(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=30)
     caption = models.TextField()
-    picture = CloudinaryField('posts')
+    picture = models.ImageField(upload_to="posts")
     created_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField()
 
