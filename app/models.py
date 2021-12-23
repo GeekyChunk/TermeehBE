@@ -1,28 +1,21 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
+import cloudinary
 # Create your models here.
 
 class Top(models.Model):
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to="tops")
+    image = CloudinaryField()
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.name
-        
-    class Meta:
-        ordering = ['-updated_at']
-        
+    
     def delete(self, using=None, keep_parents=False):
-        self.image.delete(self.image.name)
-        super().delete()
+        cloudinary.uploader.destroy(Top.image.public_id)
 
-    def save(self, *args, **kwargs):
-        try:
-            this = Top.objects.get(id=self.id)
-            if this.image != self.image:
-                this.image.delete()
-        except: pass
-        super(Top, self).save(*args, **kwargs)
+
+
 
 class Item(models.Model):
     title = models.CharField(max_length=200)
