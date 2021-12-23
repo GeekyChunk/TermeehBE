@@ -5,7 +5,7 @@ import cloudinary
 
 class Top(models.Model):
     name = models.CharField(max_length=100)
-    image = CloudinaryField()
+    image = CloudinaryField('tops')
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
@@ -21,7 +21,7 @@ class Item(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField()
-    thumbnail = models.ImageField(upload_to="thumbnails")
+    thumbnail = CloudinaryField('items')
     price = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -45,7 +45,7 @@ class Item(models.Model):
 
 class Highlight(models.Model):
     title = models.CharField(max_length=30)
-    picture = models.ImageField()
+    picture = CloudinaryField('highlights')
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -70,7 +70,7 @@ class Highlight(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=30)
     caption = models.TextField()
-    picture = models.ImageField()
+    picture = CloudinaryField('posts')
     created_at = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField()
 
